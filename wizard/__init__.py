@@ -20,21 +20,4 @@
 #
 ###############################################################################
 
-{
-    'name': "Reserve Products",
-    'summary': """
-    """,
-    'description': """
-    """,
-    'author': "Humanytek",
-    'website': "http://www.humanytek.com",
-    'category': 'Purchase',
-    'version': '1.0.0',
-    'depends': ['product_compromise'],
-    'data': [
-        'view/sale_view.xml',
-        'wizard/reserve_view.xml',
-    ],
-    'demo': [
-    ],
-}
+import reserve

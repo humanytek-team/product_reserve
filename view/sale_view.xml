@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sale_order_reserve_form" model="ir.ui.view">
+        <field name="name">sale.order.reserve.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="product_compromise.sale_order_compromise_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_liberate']" position="after">
+                <button name="action_reserve" type="object" string="Reserve" class="btn-primary"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

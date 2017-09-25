@@ -20,21 +20,22 @@
 #
 ###############################################################################
 
-{
-    'name': "Reserve Products",
-    'summary': """
-    """,
-    'description': """
-    """,
-    'author': "Humanytek",
-    'website': "http://www.humanytek.com",
-    'category': 'Purchase',
-    'version': '1.0.0',
-    'depends': ['product_compromise'],
-    'data': [
-        'view/sale_view.xml',
-        'wizard/reserve_view.xml',
-    ],
-    'demo': [
-    ],
-}
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
+from odoo.tools.float_utils import float_compare, float_round, float_is_zero
+import logging
+_logger = logging.getLogger(__name__)
+
+
+class Reserve(models.TransientModel):
+    _name = "reserve"
+
+    qty_reserve = fields.Float('Quantity', required=True)
+    stock_move_out_id = fields.Many2one('stock.move', 'Outgoing products',
+            default=lambda self: self._context.get('move_out'), required=True)
+
+    @api.multi
+    def confirm(self):
+        move = self.stock_move_out_id
+        move.action_assign_qty(self.qty_reserve, self._context.get('compromise'))
+
