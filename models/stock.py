@@ -29,13 +29,13 @@ class StockMove(models.Model):
     _name = "stock.move"
     _inherit = 'stock.move'
 
-    @api.one
+    @api.multi
     def action_done(self):
         if super(StockMove, self).action_done():
             StockQuant = self.env['stock.quant']
             ProductCompromise = self.env['product.compromise']
-            product_compromises = ProductCompromise.search([('stock_move_in_id',
-                                                    '=', self.id)])
+            product_compromises = ProductCompromise.search([
+                                    ('stock_move_in_id.id', '=', self.id)])
             for product_compromise in product_compromises:
                 move = product_compromise.stock_move_out_id
                 move_in = product_compromise.stock_move_in_id
