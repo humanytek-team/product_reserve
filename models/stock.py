@@ -29,7 +29,7 @@ class StockMove(models.Model):
     _name = "stock.move"
     _inherit = 'stock.move'
 
-    @api.multi
+    @api.one
     def action_done(self):
         if super(StockMove, self).action_done():
             StockQuant = self.env['stock.quant']
@@ -43,7 +43,6 @@ class StockMove(models.Model):
                     quant = move_in.quant_ids[len(move_in.quant_ids) - 1]
                     quants = [(quant, product_compromise.qty_compromise)]
                     StockQuant.quants_reserve(quants, move)
-
         return True
 
     @api.multi
