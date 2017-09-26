@@ -29,7 +29,7 @@ class StockMove(models.Model):
     _name = "stock.move"
     _inherit = 'stock.move'
 
-    @api.multi
+    @api.one
     def action_done(self):
         if super(StockMove, self).action_done():
             StockQuant = self.env['stock.quant']
