@@ -20,7 +20,8 @@
 #
 ###############################################################################
 
-from odoo import api, fields, models
+from odoo import api, models
+from odoo.tools.float_utils import float_compare
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -108,25 +109,28 @@ class StockMove(models.Model):
 
         # Check all ops and sort them: we want to process first the packages, then operations with lot then the rest
         #operations = operations.sorted(key=lambda x: ((x.package_id and not x.product_id) and -4 or 0) + (x.package_id and -2 or 0) + (x.pack_lot_ids and -1 or 0))
+        #_logger.info('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+        #_logger.info(operations)
         #for ops in operations:
             ## TDE FIXME: this code seems to be in action_done, isn't it ?
             ## first try to find quants based on specific domains given by linked operations for the case where we want to rereserve according to existing pack operations
-            #if not (ops.product_id and ops.pack_lot_ids):
-                #for record in ops.linked_move_operation_ids:
-                    #move = record.move_id
-                    #if move.id in main_domain:
-                        #qty = record.qty
-                        #domain = main_domain[move.id]
-                        #if qty:
-                            #quants = Quant.quants_get_preferred_domain(qty, move, ops=ops, domain=domain, preferred_domain_list=[])
-                            #Quant.quants_reserve(quants, move, record)
-            #else:
+            ##if not (ops.product_id and ops.pack_lot_ids):
+                ##for record in ops.linked_move_operation_ids:
+                    ##move = record.move_id
+                    ##if move.id in main_domain:
+                        ##qty = record.qty
+                        ##domain = main_domain[move.id]
+                        ##if qty:
+                            ##quants = Quant.quants_get_preferred_domain(qty, move, ops=ops, domain=domain, preferred_domain_list=[])
+                            ##Quant.quants_reserve(quants, move, record)
+            ##else:
+            #if (ops.product_id and ops.pack_lot_ids):
                 #lot_qty = {}
                 #rounding = ops.product_id.uom_id.rounding
                 #for pack_lot in ops.pack_lot_ids:
                     #lot_qty[pack_lot.lot_id.id] = ops.product_uom_id._compute_quantity(pack_lot.qty, ops.product_id.uom_id)
                 #for record in ops.linked_move_operation_ids:
-                    #move_qty = record.qty
+                    #move_qty = record.qty - qty_compromise
                     #move = record.move_id
                     #domain = main_domain[move.id]
                     #for lot in lot_qty:
@@ -154,3 +158,4 @@ class StockMove(models.Model):
         # Do not take force_assign as it would create pack operations
         if moves_to_assign:
             moves_to_assign.write({'state': 'assigned'})
+        self.check_move_lots()
