@@ -40,10 +40,13 @@ class StockMove(models.Model):
             for product_compromise in product_compromises:
                 move = product_compromise.stock_move_out_id
                 move_in = product_compromise.stock_move_in_id
-                if move_in.quant_ids:
-                    quant = move_in.quant_ids[len(move_in.quant_ids) - 1]
-                    quants = [(quant, product_compromise.qty_compromise)]
-                    StockQuant.quants_reserve(quants, move)
+                if not move.reserved_quant_ids:
+                    if move_in.quant_ids:
+                        quant = move_in.quant_ids[len(move_in.quant_ids) - 1]
+                        _logger.info(quant)
+                        quants = [(quant, product_compromise.qty_compromise)]
+                        _logger.info(quants)
+                        StockQuant.quants_reserve(quants, move)
         return True
 
     @api.multi
